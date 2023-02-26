@@ -28,5 +28,16 @@
   },
   "peerDependencies": {
     "next": "^13.2.1"
-  }
+  },
+  "directories": {
+    "lib": "lib"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/IainMcHugh/next-labs.git"
+  },
+  "bugs": {
+    "url": "https://github.com/IainMcHugh/next-labs/issues"
+  },
+  "homepage": "https://github.com/IainMcHugh/next-labs#readme"
 }
