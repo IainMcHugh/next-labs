@@ -1,5 +1,7 @@
 # next-labs
 
+**ALPHA RELEASE**
+
 This package allows you to configure A/B experiments via a config file that can be utilised both server and client side. It is intended for use within a NextJS application.
 
 As developers, from type-checking to application testing, we will always strive to ship as little bugs as possible to our end users. While zero bugs may be unrealistic, we aim to minimize bugs as much as possible. _next-labs_ takes this philosophy to the next level, giving you a reliable, light-weight, and easily configurable solution to _incrementally rollout_ new features in your NextJS application (no more big-bang releases!), that is consistent across the full-stack.
@@ -18,17 +20,17 @@ npm install next-labs
 3. In your `_app.tsx` file, import and initialize `ab` within your `getInitialProps`:
 
 ```tsx
-import App, { AppContext, AppProps } from 'next/app';
+import App, { AppProps, AppContext } from 'next/app';
 import ab from 'next-labs';
 
-const MyApp = ({ Component, pageProps }: AppProps) => (
-  <Component {...pageProps} />
-);
+function MyApp({ Component, pageProps }: AppProps) {
+  return <Component {...pageProps} />;
+}
 
 MyApp.getInitialProps = async (context: AppContext) => {
   const props = await App.getInitialProps(context);
   // add this line
-  await ab(props.ctx);
+  await ab(context.ctx, (err) => console.log(err));
   // return props object as normal
   return { ...props };
 };
