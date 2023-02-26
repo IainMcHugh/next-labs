@@ -1,6 +1,6 @@
 {
   "name": "next-labs",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Run experiments within your NextJS application",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
