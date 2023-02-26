@@ -62,8 +62,10 @@ const ab = async (
     return { [COOKIE_NAME]: cookie };
   });
   const cleanedCookies = cleanCookies(cookies);
-  res?.setHeader('set-cookie', formatCookies(cleanedCookies));
-  return cleanedCookies;
+  if (cleanedCookies.length !== 0) {
+    res?.setHeader('set-cookie', formatCookies(cleanedCookies));
+    return cleanedCookies;
+  } else return null;
 };
 
 export { ABCookie };

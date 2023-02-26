@@ -1,12 +1,11 @@
-import { cosmiconfig } from 'cosmiconfig';
+import fs from 'fs';
 
 import { AB_CONFIG } from './constants';
 
 const getConfig = async () => {
-  const explorer = cosmiconfig(AB_CONFIG);
-  const result = await explorer.search();
-  if (result?.isEmpty) return null;
-  return result?.config;
+  const file = fs.readFileSync(AB_CONFIG);
+  const config = JSON.parse(file.toString());
+  return config;
 };
 
 export { getConfig };

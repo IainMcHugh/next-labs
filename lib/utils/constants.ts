@@ -1,6 +1,6 @@
 import type { Environment } from './schema';
 
-export const AB_CONFIG = '.labs/ab.config.json';
+export const AB_CONFIG = './.labs/ab.config.json';
 export const COOKIE_PREFIX = 'ab';
 export const DEVELOPMENT = 'development';
 export const DEV = 'dev';

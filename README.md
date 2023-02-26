@@ -50,6 +50,7 @@ Here is a sample valid `.labs/ab.config.json` file:
 [
   {
     "name": "Experiment 1",
+    "id": "abcd1234",
     "variants": [
       {
         "name": "Original",
