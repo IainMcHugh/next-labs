@@ -1,4 +1,6 @@
-import ab, { type ABCookie } from './lib/ab';
+import type { ABCookie } from './lib/labs';
+import lab, { experiment } from './lib/labs';
 
 export { ABCookie };
-export default ab;
+export { experiment };
+export default lab;

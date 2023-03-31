@@ -7,10 +7,7 @@ import {
   ON,
   OFF,
   COOKIE_PREFIX,
-  CONFIG_REQUIRED_ERROR,
-  MISMATCH_ERROR,
   MISSING_CONFIG_ERROR,
-  WEIGHT_COUNT_ERROR,
   VARIANT_ERROR,
 } from './constants';
 
@@ -45,42 +42,9 @@ export const isExperimentRunning = (
   }
 };
 
-const validateConfiguration = (
-  variantCount: number,
-  environment: Environment,
-  configuration?: Configuration
-): Result<void> => {
-  if (configuration) {
-    const weightCount = configuration.weights.length;
-    if (variantCount !== weightCount) {
-      return new Error(MISMATCH_ERROR);
-    }
-    const totalWeight = configuration.weights.reduce((acc, curr) => acc + curr);
-    if (totalWeight !== 100) {
-      return new Error(WEIGHT_COUNT_ERROR(environment));
-    }
-  }
-};
-
 export const getExperiments = (abConfig: any): Result<Experiments> => {
   const config = experimentsSchema.safeParse(abConfig);
   if (config.success) {
-    for (let i = 0; i < config.data.length; i++) {
-      const experiment = config.data[i] as Experiment;
-      const variantCount = experiment.variants.length;
-      const dev = experiment.development;
-      const prod = experiment.production;
-      const test = experiment.test;
-      if (!dev && !prod && !test) {
-        return new Error(CONFIG_REQUIRED_ERROR);
-      }
-      const devError = validateConfiguration(variantCount, DEVELOPMENT, dev);
-      if (devError) return devError;
-      const prodError = validateConfiguration(variantCount, PRODUCTION, prod);
-      if (prodError) return prodError;
-      const testError = validateConfiguration(variantCount, TEST, test);
-      if (testError) return testError;
-    }
     return config.data;
   } else {
     return new Error(config.error.message);
@@ -120,7 +84,7 @@ export const getVariant = (
   return variant;
 };
 
-const getEnvAlias = (environment: Environment): Env => {
+export const getEnvAlias = (environment: Environment): Env => {
   switch (environment) {
     case DEVELOPMENT:
       return DEV;
@@ -138,6 +102,6 @@ export const getCookieName = (
   environment: Environment
 ): string => {
   const prefix = experiment.prefix || COOKIE_PREFIX;
-  const name = experiment.name;
-  return `${prefix}.${name}.${getEnvAlias(environment)}`;
+  const id = experiment.id;
+  return `${prefix}.${id}.${getEnvAlias(environment)}`;
 };

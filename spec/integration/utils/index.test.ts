@@ -1,6 +1,6 @@
 import { describe, test, expect, vi } from 'vitest';
 
-import type { Experiment, Environment } from '../../lib/utils/schema';
+import type { Experiment, Environment } from '../../../lib/utils/schema';
 import {
   isError,
   isExperimentRunning,
@@ -8,7 +8,7 @@ import {
   getEnvironment,
   getExperiments,
   getConfiguration,
-} from '../../lib/utils';
+} from '../../../lib/utils';
 
 const mockEnvironment: Environment = 'development';
 
@@ -100,7 +100,7 @@ describe('utils', () => {
 
   test('get cookie name', () => {
     const cookie = getCookieName(mockExperiment, mockEnvironment);
-    expect(cookie).toBe('ab.MOCK_NAME.dev');
+    expect(cookie).toBe('ab.MOCK_ID.dev');
   });
 
   test('get cookie name (custom prefix)', () => {
@@ -108,17 +108,17 @@ describe('utils', () => {
       { ...mockExperiment, prefix: 'xyz' },
       mockEnvironment
     );
-    expect(cookie).toBe('xyz.MOCK_NAME.dev');
+    expect(cookie).toBe('xyz.MOCK_ID.dev');
   });
 
   test('get cookie name (prod env)', () => {
     const cookie = getCookieName(mockExperiment, 'production');
-    expect(cookie).toBe('ab.MOCK_NAME.pro');
+    expect(cookie).toBe('ab.MOCK_ID.pro');
   });
 
   test('get cookie name (test env)', () => {
     const cookie = getCookieName(mockExperiment, 'test');
-    expect(cookie).toBe('ab.MOCK_NAME.test');
+    expect(cookie).toBe('ab.MOCK_ID.test');
   });
 
   test('get environment', () => {

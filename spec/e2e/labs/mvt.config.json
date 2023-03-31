@@ -1,0 +1,44 @@
+[
+  {
+    "name": "Experiment 1",
+    "id": "abcd1234",
+    "variants": [
+      {
+        "name": "Original",
+        "id": 0,
+        "sub": [
+          {
+            "name": "Original - Sub 0",
+            "id": 0
+          },
+          {
+            "name": "Original - Sub 1",
+            "id": 1
+          }
+        ]
+      },
+      {
+        "name": "Variant 1",
+        "id": 1,
+        "sub": [
+          {
+            "name": "Variant 1 - Sub 0",
+            "id": 0
+          },
+          {
+            "name": "Variant 1 - Sub 1",
+            "id": 1
+          }
+        ]
+      }
+    ],
+    "development": {
+      "running": "on",
+      "weights": [0, 100]
+    },
+    "test": {
+      "running": "on",
+      "weights": [0, 100]
+    }
+  }
+]

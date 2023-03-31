@@ -21,7 +21,7 @@ npm install next-labs
 
 ```tsx
 import App, { AppProps, AppContext } from 'next/app';
-import ab from 'next-labs';
+import lab from 'next-labs';
 
 function MyApp({ Component, pageProps }: AppProps) {
   return <Component {...pageProps} />;
@@ -30,7 +30,7 @@ function MyApp({ Component, pageProps }: AppProps) {
 MyApp.getInitialProps = async (context: AppContext) => {
   const props = await App.getInitialProps(context);
   // add this line
-  await ab(context.ctx, (err) => console.log(err));
+  await lab(context.ctx, (err) => console.log(err));
   // return props object as normal
   return { ...props };
 };

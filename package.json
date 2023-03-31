@@ -12,24 +12,48 @@
     "build": "tsup index.ts --format cjs,esm --dts",
     "lint": "tsc",
     "test": "vitest",
-    "test:coverage": "vitest run --coverage && open coverage/index.html"
+    "test:coverage": "vitest run --coverage && open coverage/index.html",
+    "test:e2e": "npm-run-all --parallel mock:e2e e2e:dev cy:open",
+    "test:e2e:run": "npm-run-all --parallel mock:e2e e2e:dev cy:run",
+    "mock:e2e": "NODE_ENV=test",
+    "e2e:dev": "next spec/e2e",
+    "e2e:build": "next build spec/e2e",
+    "e2e:start": "next start spec/e2e",
+    "cy:open": "cypress open",
+    "cy:run": "cypress run"
   },
   "author": "Iain McHugh",
   "license": "MIT",
   "devDependencies": {
+    "@babel/core": "^7.21.0",
+    "@babel/preset-env": "^7.20.2",
+    "@babel/preset-react": "^7.18.6",
+    "@babel/preset-typescript": "^7.21.0",
     "@changesets/cli": "^2.26.0",
+    "@types/node": "^18.14.2",
+    "@types/react": "^18.0.28",
+    "@types/react-dom": "^18.0.11",
     "@vitest/coverage-c8": "^0.28.5",
-    "next": "^13.2.1",
+    "cypress": "^12.7.0",
+    "next": "^13.0.0",
+    "npm-run-all": "^4.1.5",
     "prettier": "^2.8.4",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0",
     "tsup": "^6.6.3",
     "typescript": "^4.9.5",
     "vitest": "^0.28.5"
   },
   "dependencies": {
+    "fs": "0.0.1-security",
+    "universal-cookie": "^4.0.4",
     "zod": "^3.20.6"
   },
   "peerDependencies": {
-    "next": "^13.2.1"
+    "next": "^13.2.1",
+    "react": ">=16.0.0",
+    "react-dom": ">=16.0.0",
+    "fs": "0.0.1-security"
   },
   "directories": {
     "lib": "lib"

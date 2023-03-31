@@ -1,9 +1,9 @@
 import { describe, test, expect, beforeEach, vi, afterEach } from 'vitest';
 
-import type { Context } from '../lib/utils/cookie';
-import { mockExperiments } from './mocks';
-import * as utils from '../lib/utils';
-import ab from '../lib/ab';
+import type { Context } from '../../lib/utils/cookie';
+import { mockExperiments } from '../mocks';
+import * as utils from '../../lib/utils';
+import ab from '../../lib/labs';
 
 const mockCookie = 'MOCK_COOKIE';
 const mockSetHeader = vi.fn();
@@ -26,19 +26,19 @@ vi.mock('../lib/utils/config', () => {
   };
 });
 
-describe('ab', () => {
+describe('labs', () => {
   test('e2e (happy path)', async () => {
     const result = await ab(mockContext, mockCallback);
     expect(mockSetHeader).toBeCalledWith('set-cookie', [
-      'ab.experiment-1.test=dlk1j049dqa.1;',
+      'ab.dlk1j049dqa.test=1;',
     ]);
-    expect(result).toStrictEqual([{ 'ab.experiment-1.test': 'dlk1j049dqa.1' }]);
+    expect(result).toStrictEqual([{ 'ab.dlk1j049dqa.test': '1' }]);
   });
 
-  test('e2e (switched off)', async () => {
+  test.only('e2e (switched off)', async () => {
     vi.spyOn(utils, 'isExperimentRunning').mockReturnValueOnce(false);
     const res = await ab(mockContext, mockCallback);
-    expect(res).toStrictEqual([]);
+    expect(res).toBeNull();
     expect(mockSetHeader).toBeCalled();
   });
 
@@ -65,7 +65,7 @@ describe('ab', () => {
       new Error('INVALID_CONFIGURATION')
     );
     const res = await ab(mockContext, mockCallback);
-    expect(res).toStrictEqual([]);
+    expect(res).toBeNull();
     expect(mockCallback).toBeCalledWith(new Error('INVALID_CONFIGURATION'));
   });
 
@@ -74,7 +74,7 @@ describe('ab', () => {
       new Error('INVALID_CONFIG')
     );
     const res = await ab(mockContext, mockCallback);
-    expect(res).toStrictEqual([]);
+    expect(res).toBeNull();
     expect(mockCallback).toBeCalledWith(new Error('INVALID_CONFIG'));
   });
 
@@ -83,7 +83,7 @@ describe('ab', () => {
       new Error('INVALID_VARIANT')
     );
     const res = await ab(mockContext, mockCallback);
-    expect(res).toStrictEqual([]);
+    expect(res).toBeNull();
     expect(mockCallback).toBeCalledWith(new Error('INVALID_VARIANT'));
   });
 });

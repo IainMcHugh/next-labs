@@ -1,4 +1,5 @@
 import type { NextPageContext, GetServerSidePropsContext } from 'next';
+import Cookies from 'universal-cookie';
 
 export type UncleanCookie = { [x: string]: string | null } | null | undefined;
 export type ABCookie = { [x: string]: string };
@@ -43,4 +44,22 @@ export const formatCookies = (cookies: ABCookie[]) => {
   return cookies.reduce<string[]>((acc, curr) => {
     return [...acc, `${Object.keys(curr)[0]}=${Object.values(curr)[0]};`];
   }, []);
+};
+
+export const cookie = () => {
+  const cookies = new Cookies();
+
+  function get(name: string) {
+    return cookies.get(name) as string | undefined;
+  }
+  const getAll = () => {
+    console.log({ getAll: cookies.getAll() });
+    return cookies.getAll() as ABCookie;
+  };
+
+  function set(name: string, value: string) {
+    cookies.set(name, value);
+  }
+
+  return { get, set, getAll };
 };

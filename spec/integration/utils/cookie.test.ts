@@ -7,7 +7,7 @@ import {
   formatCookies,
   clearCookie,
   cleanCookies,
-} from '../../lib/utils/cookie';
+} from '../../../lib/utils/cookie';
 
 const mockName = 'MOCK_COOKIE';
 const mockCookie = 'MOCK_COOKIE=abcd1234;';

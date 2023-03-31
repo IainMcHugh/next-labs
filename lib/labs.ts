@@ -1,4 +1,5 @@
-import { getConfig } from './utils/config';
+import { getConfigPath } from './utils/config';
+import type { LabOptions } from './utils/schema';
 import {
   type Context,
   type ABCookie,
@@ -16,35 +17,37 @@ import {
   getCookieName,
   getVariant,
 } from './utils';
+import { ab } from './ab';
 
-const ab = async (
+const lab = async (
   context: Context,
-  cb: (err: Error) => void
+  options: LabOptions,
+  cb?: (err: Error) => void
 ): Promise<ABCookie[] | null> => {
   const serverCookie = context.req?.headers.cookie;
-  const config = await getConfig();
-  const experiments = getExperiments(config);
+  const configPath = getConfigPath(options);
+  const experiments = getExperiments(require(configPath));
   if (isError(experiments)) {
-    cb(experiments);
+    cb && cb(experiments);
     return null;
   }
   const environment = getEnvironment();
   if (isError(environment)) {
-    cb(environment);
+    cb && cb(environment);
     return null;
   }
   const res = context.res;
   const cookies = experiments.map((experiment) => {
     const configuration = getConfiguration(experiment, environment);
     if (isError(configuration)) {
-      cb(configuration);
+      cb && cb(configuration);
       return null;
     }
     const COOKIE_NAME = getCookieName(experiment, environment);
     let cookie = getServerCookie(COOKIE_NAME, serverCookie);
     const isRunning = isExperimentRunning(experiment, environment);
     if (isError(isRunning)) {
-      cb(isRunning);
+      cb && cb(isRunning);
       return null;
     }
     if (cookie && !isRunning) {
@@ -54,10 +57,10 @@ const ab = async (
     if (!cookie && isRunning) {
       const variant = getVariant(experiment, configuration);
       if (isError(variant)) {
-        cb(variant);
+        cb && cb(variant);
         return null;
       }
-      cookie = `${experiment.id}.${variant.id}`;
+      cookie = variant.id.toString();
     }
     return { [COOKIE_NAME]: cookie };
   });
@@ -68,5 +71,10 @@ const ab = async (
   } else return null;
 };
 
+const experiment = {
+  ab,
+};
+
 export { ABCookie };
-export default ab;
+export { experiment };
+export default lab;
