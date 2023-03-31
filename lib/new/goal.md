@@ -18,7 +18,7 @@ type ABVariant = {
 type ABExperiment = {
   name: string;
   id: string;
-  variant: ABVariant[];
+  variants: ABVariant[];
   development?: Environment;
   production?: Environment;
   test?: Environment;
@@ -27,7 +27,7 @@ type ABExperiment = {
 type MVTVariant = {
   name: string;
   id: number;
-  variant: MVTVariant | null;
+  variants: MVTVariant | null;
 };
 
 type MVTExperiment = {
@@ -93,7 +93,7 @@ type Environment = {
 ```tsx
 // _app.tsx
 import App, { AppProps, AppContext } from 'next/app';
-import { Laboratory } from 'next-labs';
+import lab, { Laboratory } from 'next-labs';
 
 const MyApp = (props) => {
   const { Component, pageProps, experiments } = props;
@@ -107,7 +107,7 @@ const MyApp = (props) => {
 MyApp.getInitialProps = async (context: AppContext) => {
   const props = await App.getInitialProps(context);
   let batchCookies: string[] = [];
-  const result = await labs(appContext, (error) => console.log(error));
+  const result = await lab(appContext, (error) => console.log(error));
   batchCookies.push(result.cookie);
   appContext.ctx.res.setHeader('set-cookie', batchCookies);
   return { ...props, experiments: result.data };
@@ -118,4 +118,16 @@ export default MyApp;
 
 ```tsx
 // component.tsx
+
+const Component = () => {
+  const { ab, mvt } = useLab();
+  const isControl = ab.isControl('Experiment 1');
+  const variant = ab.get('Experiment 2');
+  return (
+    <div>
+      <h1>Hello from component</h1>
+      {isControl ? <p>Control</p> : <p>Variant: {variant}</p>}
+    </div>
+  );
+};
 ```

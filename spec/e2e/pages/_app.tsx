@@ -1,28 +1,36 @@
-import App, { AppProps, AppContext } from 'next/app';
-import config from '../labs';
+import App, { AppProps as NextAppProps, AppContext } from 'next/app';
 //come from library
-import lab from '../../../dist';
-import { LabProvider } from 'context/Laboratory';
+import lab, { Laboratory } from '../../../dist';
 
-function MyApp({ Component, pageProps }: AppProps) {
+// Fixed from Next v12.3.0 onwards
+type AppProps<P = any> = {
+  pageProps: P;
+} & Omit<NextAppProps<P>, 'pageProps'>;
+
+type PageProps = {
+  experiments: any;
+};
+
+function MyApp({ Component, pageProps }: AppProps<PageProps>) {
+  const { experiments } = pageProps;
   return (
-    <LabProvider config={config}>
+    <Laboratory experiments={experiments}>
       <Component {...pageProps} />
-    </LabProvider>
+    </Laboratory>
   );
 }
 
 MyApp.getInitialProps = async (context: AppContext) => {
-  const props = await App.getInitialProps(context);
+  const pageProps = await App.getInitialProps(context);
   // add this line
-  await lab(context.ctx, {}, (err) => console.log(err));
-  /**
-   * const experiments = await lab(...)
-   * add to props
-   * remove experimentID and replace with experiments
-   */
-  // return props object as normal
-  return { ...props };
+  const res = lab(context.ctx, (err) => console.log(err));
+  context.ctx.res?.setHeader('set-cookie', res?.cookies ?? []);
+  return {
+    pageProps: {
+      ...pageProps,
+      experiments: res?.data,
+    },
+  };
 };
 
 export default MyApp;
