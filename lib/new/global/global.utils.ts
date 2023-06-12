@@ -4,11 +4,25 @@ import type {
   Data,
   Option,
   Result,
+  ResultError,
+  ResultSuccess,
 } from './global.types';
 import { Environment, environmentSchema, Variant } from './global.schema';
 
-export const isError = <T>(data: Result<T>): data is Error => {
-  return Boolean(data instanceof Error);
+export const ok = <T>(data: T): ResultSuccess<T> => {
+  return { data, error: null };
+};
+
+export const isOkay = <T>(data: Result<T>): data is ResultSuccess<T> => {
+  return Boolean(data.error === null);
+};
+
+export const error = (error: Error): ResultError => {
+  return { error, data: null };
+};
+
+export const isError = <T>(data: Result<T>): data is ResultError => {
+  return Boolean(data.error instanceof Error);
 };
 
 export const isNull = <T>(data: Option<T>): data is null => {
@@ -18,9 +32,9 @@ export const isNull = <T>(data: Option<T>): data is null => {
 export const getEnvironment = (): Result<Environment> => {
   const result = environmentSchema.safeParse(process.env.NODE_ENV);
   if (result.success) {
-    return result.data;
+    return ok(result.data);
   } else {
-    return new Error(result.error.message);
+    return error(new Error(result.error.message));
   }
 };
 
@@ -36,7 +50,7 @@ export const mapVariantToCookie = (
   };
 };
 
-export const mapCookieToCookie = (cookies: Cookie[]): string[] => {
+export const formatCookies = (cookies: Cookie[]): string[] => {
   return cookies.reduce<string[]>((acc, curr) => {
     let cookieConfig: string | null = null;
     if (!isNull(curr.config)) {

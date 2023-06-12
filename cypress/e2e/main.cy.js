@@ -4,5 +4,6 @@ describe('e2e', () => {
     Cypress.Cookies.debug(true);
     cy.setCookie('foo', 'bar');
     cy.get('h1').contains('Welcome');
+    cy.get('button').click();
   });
 });

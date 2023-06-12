@@ -19,6 +19,10 @@
     "test": {
       "running": "on",
       "weights": [0, 100]
+    },
+    "production": {
+      "running": "off",
+      "weights": [100, 0]
     }
   }
 ]

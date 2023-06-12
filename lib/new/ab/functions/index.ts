@@ -1,7 +1,7 @@
 import { VARIANT_ERROR } from '../../global/global.constants';
 import { Environment } from '../../global/global.schema';
-import type { Cookie, Result } from '../../global/global.types';
-import { mapVariantToCookie } from '../../global/global.utils';
+import { type Cookie, type Result } from '../../global/global.types';
+import { error, mapVariantToCookie, ok } from '../../global/global.utils';
 import {
   ABExperiment,
   ABExperiments,
@@ -13,9 +13,9 @@ import {
 export const getExperiments = (config: any): Result<ABExperiments> => {
   const result = abExperimentsSchema.safeParse(config);
   if (result.success) {
-    return result.data;
+    return ok(result.data);
   } else {
-    return new Error(result.error.message);
+    return error(new Error(result.error.message));
   }
 };
 
@@ -25,10 +25,12 @@ export const getSettings = (
 ): Result<ABSetting> => {
   const result = experiment[environment];
   if (!result)
-    return new Error(
-      `${experiment.name} settings missing for ${environment} environment.`
+    return error(
+      new Error(
+        `${experiment.name} settings missing for ${environment} environment.`
+      )
     );
-  else return result;
+  else return ok(result);
 };
 
 export const getVariants = (experiment: ABExperiment): ABVariant[] => {
@@ -45,10 +47,12 @@ export const getCookie = (
     if (settings.weights[variant.id] >= random) return true;
     random -= settings.weights[variant.id];
   });
-  if (!variant) return Error(VARIANT_ERROR);
+  if (!variant) return error(Error(VARIANT_ERROR));
   else
-    return mapVariantToCookie(id, {
-      ...variant,
-      id: variant.id.toString(),
-    });
+    return ok(
+      mapVariantToCookie(id, {
+        ...variant,
+        id: variant.id.toString(),
+      })
+    );
 };

@@ -1,7 +1,7 @@
 import { VARIANT_ERROR } from '../../global/global.constants';
 import type { Environment, Variant } from '../../global/global.schema';
 import type { Cookie, Result } from '../../global/global.types';
-import { mapVariantToCookie } from '../../global/global.utils';
+import { error, mapVariantToCookie, ok } from '../../global/global.utils';
 import {
   MVTExperiment,
   MVTExperiments,
@@ -18,9 +18,9 @@ type FlatVariant = {
 export const getExperiments = (config: any): Result<MVTExperiments> => {
   const result = mvtExperimentsSchema.safeParse(config);
   if (result.success) {
-    return result.data;
+    return ok(result.data);
   } else {
-    return new Error(result.error.message);
+    return error(new Error(result.error.message));
   }
 };
 
@@ -30,17 +30,22 @@ export const getSettings = (
 ): Result<MVTSetting> => {
   const result = experiment[environment];
   if (!result)
-    return new Error(
-      `${experiment.name} settings missing for ${environment} environment.`
+    return error(
+      new Error(
+        `${experiment.name} settings missing for ${environment} environment.`
+      )
     );
-  else return result;
+  else return ok(result);
 };
 
 export const getVariants = (experiment: MVTExperiment): MVTVariant[] => {
   return experiment.variants;
 };
 
-export const getCookie = (id, variants: MVTVariant[]): Result<Cookie> => {
+export const getCookie = (
+  id: string,
+  variants: MVTVariant[]
+): Result<Cookie> => {
   let weight = 0;
   const flatVariants: Variant[] = [];
   variants.forEach((variant) => {
@@ -60,6 +65,6 @@ export const getCookie = (id, variants: MVTVariant[]): Result<Cookie> => {
     if (weights[index] >= random) return true;
     random -= weights[index];
   });
-  if (!variant) return Error(VARIANT_ERROR);
-  else return mapVariantToCookie(id, variant);
+  if (!variant) return error(new Error(VARIANT_ERROR));
+  else return ok(mapVariantToCookie(id, variant));
 };

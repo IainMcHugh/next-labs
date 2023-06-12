@@ -18,7 +18,7 @@ describe('labs', () => {
     const result = lab(mockContext, (err) => console.log(err));
     expect(result).toStrictEqual({
       cookies: ['abcd1234=1; ', 'xyza9876=1-0; '],
-      data: {
+      experiments: {
         ab: [{ name: 'abcd1234', id: '1' }],
         mvt: [{ name: 'xyza9876', id: '1-0' }],
       },
